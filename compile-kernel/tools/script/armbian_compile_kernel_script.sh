@@ -408,7 +408,8 @@ compile_kernel() {
 
     # Install headers
     echo -e "${STEPS} Install headers ..."
-    headers_install
+    make ${MAKE_SET_STRING} INSTALL_HDR_PATH=${out_kernel}/headers headers_install
+    # headers_install
     [[ "${?}" -eq "0" ]] && echo -e "${SUCCESS} The headers is installed successfully."
 }
 
