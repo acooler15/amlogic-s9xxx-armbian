@@ -80,7 +80,7 @@ jobs:
           echo "::set-output name=status::success"
 
       - name: Compile the kernel
-        uses: ophub/amlogic-s9xxx-armbian@main
+        uses: acooler15/amlogic-s9xxx-armbian@main
         with:
           build_target: kernel
           kernel_repo: ${{ github.event.inputs.kernel_repo }}
@@ -90,14 +90,20 @@ jobs:
           kernel_sign: ${{ github.event.inputs.kernel_sign }}
           kernel_config: ${{ github.event.inputs.kernel_config }}
 
-      - name: Upload Kernel to Release
-        uses: ncipollo/release-action@main
+      # - name: Upload Kernel to Release
+      #   uses: ncipollo/release-action@main
+      #   if: env.PACKAGED_STATUS == 'success' && !cancelled()
+      #   with:
+      #     tag: kernel_${{ env.PACKAGED_OUTPUTTAGS }}
+      #     artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
+      #     allowUpdates: true
+      #     token: ${{ secrets.GH_TOKEN }}
+      #     body: |
+      #       The kernel can be used to compile Armbian and OpenWrt.
+      #       The kernel source code comes from: ${{ github.event.inputs.kernel_repo }}
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
         if: env.PACKAGED_STATUS == 'success' && !cancelled()
         with:
-          tag: kernel_${{ env.PACKAGED_OUTPUTTAGS }}
-          artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
-          allowUpdates: true
-          token: ${{ secrets.GH_TOKEN }}
-          body: |
-            The kernel can be used to compile Armbian and OpenWrt.
-            The kernel source code comes from: ${{ github.event.inputs.kernel_repo }}
+          name: kernel
+          path: ${{ env.PACKAGED_OUTPUTPATH }}/ # or path/to/artifact
